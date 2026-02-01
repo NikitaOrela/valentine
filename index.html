@@ -30,7 +30,6 @@
             text-align: center;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
             position: relative;
-            min-height: 600px;
         }
 
         .photo {
@@ -50,9 +49,11 @@
             line-height: 1.4;
         }
 
-        .buttons-container {
-            position: relative;
-            min-height: 150px;
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -68,8 +69,6 @@
 
         .btn-yes {
             background-color: #ff4757;
-            position: relative;
-            z-index: 10;
         }
 
         .btn-yes:hover {
@@ -80,9 +79,7 @@
         .btn-no {
             background-color: #a4a4a4;
             position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-top: 20px;
+            transition: all 0.3s ease;
         }
 
         .celebration {
@@ -102,7 +99,7 @@
             margin-top: 20px;
         }
 
-        .sticker-container img {
+        .sticker-container video {
             max-width: 300px;
             width: 100%;
             border-radius: 20px;
@@ -118,7 +115,7 @@
     <div class="container" id="page1">
         <img src="photo.jpg" alt="Фото" class="photo">
         <div class="question">Стеша будешь ли ты моей валентинкой?</div>
-        <div class="buttons-container">
+        <div class="buttons">
             <button class="btn btn-yes" onclick="showCelebration()">Да</button>
             <button class="btn btn-no" id="noBtn">Нет</button>
         </div>
@@ -129,63 +126,52 @@
         <img src="photo.jpg" alt="Фото" class="photo">
         <div class="celebration">Ура 🎉</div>
         <div class="sticker-container">
-            <img src="sticker.gif" alt="Celebration">
+            <video autoplay loop muted playsinline>
+                <img src="sticker.gif" alt="Celebration">
+            </video>
         </div>
     </div>
 
     <script>
         const noBtn = document.getElementById('noBtn');
-        const buttonsContainer = document.querySelector('.buttons-container');
+        const container = document.querySelector('.container');
 
-        let noBtnInitialized = false;
-
-        function initNoButton() {
-            if (!noBtnInitialized) {
-                const rect = buttonsContainer.getBoundingClientRect();
-                noBtn.style.top = '60px';
-                noBtnInitialized = true;
-            }
-        }
-
-        noBtn.addEventListener('mouseenter', function() {
-            initNoButton();
-            moveButton();
-        });
-
-        noBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            moveButton();
-        });
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('click', moveButton);
 
         function moveButton() {
-            const containerRect = buttonsContainer.getBoundingClientRect();
-            const btnWidth = noBtn.offsetWidth;
-            const btnHeight = noBtn.offsetHeight;
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
             
-            const maxX = containerRect.width - btnWidth;
-            const maxY = containerRect.height - btnHeight;
+            // Размеры области для перемещения (внутри белого контейнера)
+            const maxX = containerRect.width - btnRect.width - 40;
+            const maxY = containerRect.height - btnRect.height - 40;
             
-            let newX = Math.random() * maxX;
-            let newY = Math.random() * maxY;
+            // Случайные координаты
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
             
-            noBtn.style.left = newX + 'px';
-            noBtn.style.top = newY + 'px';
-            noBtn.style.transform = 'none';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
         }
 
         function showCelebration() {
             document.getElementById('page1').classList.add('hidden');
             document.getElementById('page2').classList.remove('hidden');
+            
+            // Запускаем конфетти (опционально)
             celebrate();
         }
 
         function celebrate() {
+            // Простая анимация конфетти
             const duration = 3000;
             const animationEnd = Date.now() + duration;
             const colors = ['#ff4757', '#ffb6d9', '#ffc9e3', '#ff6b81'];
 
             (function frame() {
                 const timeLeft = animationEnd - Date.now();
+
                 if (timeLeft <= 0) return;
 
                 const particleCount = 3;
