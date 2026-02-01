@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💝 Валентинка для Стеши</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffb6d9 0%, #ffc9e3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 30px;
+            border: 5px solid #ffb6d9;
+        }
+
+        .question {
+            color: #000;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 50px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+        }
+
+        .btn-yes {
+            background-color: #ff4757;
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4);
+        }
+
+        .btn-no {
+            background-color: #a4a4a4;
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        .celebration {
+            font-size: 36px;
+            color: #ff4757;
+            font-weight: bold;
+            margin-bottom: 30px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .sticker-container {
+            margin-top: 20px;
+        }
+
+        .sticker-container img {
+            max-width: 300px;
+            width: 100%;
+            border-radius: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Первая страница -->
+    <div class="container" id="page1">
+        <img src="photo.jpg" alt="Фото" class="photo">
+        <div class="question">Стеша будешь ли ты моей валентинкой?</div>
+        <div class="buttons">
+            <button class="btn btn-yes" onclick="showCelebration()">Да</button>
+            <button class="btn btn-no" id="noBtn">Нет</button>
+        </div>
+    </div>
+
+    <!-- Вторая страница -->
+    <div class="container hidden" id="page2">
+        <img src="photo.jpg" alt="Фото" class="photo">
+        <div class="celebration">Ура 🎉</div>
+        <div class="sticker-container">
+            <img src="sticker.gif" alt="Celebration">
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const container = document.querySelector('.container');
+
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('click', moveButton);
+
+        function moveButton() {
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            
+            // Размеры области для перемещения (внутри белого контейнера)
+            const maxX = containerRect.width - btnRect.width - 40;
+            const maxY = containerRect.height - btnRect.height - 40;
+            
+            // Случайные координаты
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        function showCelebration() {
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('page2').classList.remove('hidden');
+            
+            // Запускаем конфетти (опционально)
+            celebrate();
+        }
+
+        function celebrate() {
+            // Простая анимация конфетти
+            const duration = 3000;
+            const animationEnd = Date.now() + duration;
+            const colors = ['#ff4757', '#ffb6d9', '#ffc9e3', '#ff6b81'];
+
+            (function frame() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) return;
+
+                const particleCount = 3;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'fixed';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = '-10px';
+                    particle.style.width = '10px';
+                    particle.style.height = '10px';
+                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.borderRadius = '50%';
+                    particle.style.pointerEvents = 'none';
+                    particle.style.zIndex = '9999';
+                    document.body.appendChild(particle);
+
+                    const animation = particle.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(100vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                    ], {
+                        duration: 2000 + Math.random() * 1000,
+                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                    });
+
+                    animation.onfinish = () => particle.remove();
+                }
+
+                requestAnimationFrame(frame);
+            })();
+        }
+    </script>
+</body>
+</html>
